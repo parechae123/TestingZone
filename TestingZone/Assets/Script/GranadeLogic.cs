@@ -5,7 +5,7 @@ using UnityEngine;
 public class GranadeLogic : MonoBehaviour
 {
     public LayerMask TargetLayer;
-    public 
+    public RaycastHit HitColls;
     // Update is called once per frame
     void Update()
     {
