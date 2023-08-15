@@ -639,7 +639,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plrTR: {fileID: 1696622052}
-  cameraDistance: {x: 0, y: 10, z: 0}
+  cameraDistance: {x: 0, y: 20, z: 0}
 --- !u!1 &1270971961
 GameObject:
   m_ObjectHideFlags: 0
@@ -990,13 +990,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97f9707002160cc4fb28d4c1053d3e78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPosition: {x: 0, y: 0, z: 0}
   ground:
     serializedVersion: 2
     m_Bits: 8
-  MoveSpeed: 10
   halfPlayerHeight: {x: 0, y: 0.5, z: 0}
   NA: {fileID: 1696622054}
+  MoveSpeed: 0
 --- !u!195 &1696622054
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1007,7 +1006,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 0
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
