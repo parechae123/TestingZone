@@ -10,7 +10,7 @@ public class SwordManSkill1 : SkillFactory
         effectType = new Dealing();
         effectType.ValueSetting(100);
         effectRange = new EffArea();
-        
+        effectRange.AreaRadiosSet(2);
         skillNumber = 0;
     }
     public override void UseSkill(List<Stats> targets)
@@ -33,6 +33,7 @@ public class SwordManSkill2 : SkillFactory
         skillEffect = null;
         effectType = new Buff();
         effectRange = new EffArea();
+        effectRange.AreaRadiosSet(2);
         skillNumber = 1;
     }
     public override void UseSkill(List<Stats> targets)

@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     public Vector3 halfPlayerHeight;
     public NavMeshAgent NA;
     public float MoveSpeed;
+    public NavMeshAgent a;
     private void Reset()
     {
         halfPlayerHeight = new Vector3(0, GetComponent<Collider>().bounds.extents.y, 0);
@@ -21,11 +22,7 @@ public class Player : MonoBehaviour
     }
     private void Start()
     {
-        RefTester(ref MoveSpeed);
-    }
-    private void RefTester(ref float aa)
-    {
-        NA.speed = aa;
+
     }
     void Update()
     {

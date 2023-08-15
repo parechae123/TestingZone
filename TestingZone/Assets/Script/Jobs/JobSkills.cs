@@ -66,7 +66,7 @@ public class Buff : SkillType
 public abstract class RangeType
 {
     public abstract void GetRangeEffect(List<Stats> TGs);
-    public abstract void AreaRadiosSet(ref float SkillRadios);
+    public abstract void AreaRadiosSet(float SkillRadios);
     public abstract void GetSingleEffect( Stats TG);
 }
 public class EffArea : RangeType
@@ -77,7 +77,7 @@ public class EffArea : RangeType
     {
         Targets = TGs;
     }
-    public override void AreaRadiosSet( ref float SkillRadi)
+    public override void AreaRadiosSet(float SkillRadi)
     {
         SkillRadios = SkillRadi;
     }
@@ -93,7 +93,7 @@ public class EffTarget : RangeType
     {
 
     }
-    public override void AreaRadiosSet(ref float SkillRadi)
+    public override void AreaRadiosSet(float SkillRadi)
     {
 
     }
