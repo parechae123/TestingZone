@@ -6,6 +6,7 @@ using _Scripts.Tiles;
 using Tarodev_Pathfinding._Scripts.Grid.Scriptables;
 using Tarodev_Pathfinding._Scripts.Units;
 using UnityEngine;
+using DG.Tweening;
 using Random = UnityEngine.Random;
 
 namespace Tarodev_Pathfinding._Scripts.Grid {
@@ -19,14 +20,44 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
         public Dictionary<Vector2, NodeBase> Tiles { get; private set; }
         public PlayerStat playerStat = new PlayerStat();
         public NodeBase _playerNodeBase, _goalNodeBase;
-        private Unit _spawnedPlayer, _spawnedGoal;
-        public Stack<NodeBase> _outPutNodes = new Stack<NodeBase>();
+        public NodeBase _PlayerStandingNode
+        {
+            get { return _playerNodeBase; }
+            set 
+            {
+                if (_playerNodeBase != value)
+                {
+                    _spawnedPlayer.transform.DOComplete();
+                    _spawnedPlayer.transform.DOKill();
+                    Vector3 tempVec = value.transform.position-_playerNodeBase.transform.position;
+                    tempVec = tempVec / 2f;
 
+                    _spawnedPlayer.transform.DOMove(value.transform.position, 1f / playerStat.moveSpeed ).SetEase(Ease.Linear);
+//                    _spawnedPlayer.transform.DOMove(_playerNodeBase.transform.position + tempVec, (1f / playerStat.moveSpeed) /2f);
+//                    _spawnedPlayer.transform.DOMove(value.transform.position , (1f / playerStat.moveSpeed) / 2f);
+                    if (_outPutNodes.Count > 0 )
+                    {
+                        if (_outPutNodes[_outPutNodes.Count - 1] == value) 
+                        { 
+                             _outPutNodes.Clear(); _states = PlayerStates.standing;
+                        }
+
+                    }
+                }
+                _playerNodeBase = value;
+            }
+        }
+        private Unit _spawnedPlayer, _spawnedGoal;
+        public List<NodeBase> _outPutNodes = new List<NodeBase>();
+
+        PlayerStates _states;
+        public float moveTargetTime = 0;
+        public float movingTimer = 0;
         void Awake() => Instance = this;
 
         private void Start() {
             Tiles = _scriptableGrid.GenerateGrid();
-         
+            _states = PlayerStates.standing;
             foreach (var tile in Tiles.Values) tile.CacheNeighbors();
 
             SpawnUnits();
@@ -43,6 +74,7 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
             foreach (var t in Tiles.Values) t.RevertTile();
 
             var path = Pathfinding.FindPath(_playerNodeBase, _goalNodeBase);
+            Debug.Log(_outPutNodes.Count);
         }
         public void MovePlayer(NodeBase targetNode)
         {
@@ -74,39 +106,96 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
         }
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (_outPutNodes.Count > 0)
             {
-                StartCoroutine(BlinkNodes());
+
+                if (Input.GetKeyDown(KeyCode.Space) && _states != PlayerStates.walking)
+                {
+
+                    ResetMoveTimers();
+                    movingTimer = 0;
+                    _states= PlayerStates.walking;
+                }
+
+            }
+            switch (_states)
+            {
+                case PlayerStates.walking:
+                    movingTimer += Time.deltaTime;
+                    if (movingTimer >= moveTargetTime)
+                    {
+                        ResetMoveTimers();
+                        _states = PlayerStates.standing;                        
+                    }
+                    else
+                    {
+                        if (_outPutNodes.Count>0)
+                        {
+                            _PlayerStandingNode = _outPutNodes[TimePerIndex()];
+                        }
+                    }
+                    break;
+                case PlayerStates.standing:
+                    break;
+                case PlayerStates.attacking:
+                    break;
+                default:
+                    break;
             }
         }
-        IEnumerator BlinkNodes()
+        /// <summary>
+        /// 이동관련 타이머 모두 초기화
+        /// </summary>
+        public void ResetMoveTimers()
+        {
+            moveTargetTime = _outPutNodes.Count > 0 ? _outPutNodes.Count * (1f / playerStat.moveSpeed): 0;
+            movingTimer = 0;
+        }
+        /// <summary>
+        /// 초당 플레이어 이동속도를 기준으로 하여 Index를 반환
+        /// </summary>
+        /// <returns></returns>
+        private int TimePerIndex()
+        {
+            return (int)(movingTimer / (1f / playerStat.moveSpeed));
+        }
+/*        IEnumerator MoveNode()
         {
             yield return null;
             float timer = 1f / playerStat.moveSpeed;
             while (_outPutNodes.Count > 0)
             {
-                NodeBase tempNextNode = _outPutNodes.Pop();
+
+            }
+            for (int i = 0; i < _outPutNodes.Count; i++)
+            {
+                NodeBase tempNextNode = _outPutNodes[TimePerIndex()];
                 Vector3 tempOrinPos = _playerNodeBase.transform.position;
-                StartCoroutine(MoveAction(tempOrinPos,tempNextNode.transform.position,timer,60f));
+                StartCoroutine(MoveAction(tempOrinPos, tempNextNode.transform.position, timer, 15f));
                 yield return new WaitForSeconds(timer);
                 MovePlayer(tempNextNode);
             }
+
         }
-        IEnumerator MoveAction(Vector3 startPos,Vector3 endPos,float playerSpeed,float frame)
+        IEnumerator MoveAction(Vector3 startPos,Vector3 endPos,float playerSpeedPerSec,float frame)
         {
             //이건 DOTween으로 처리하는게 나아보임
-            float moveFrame = playerSpeed / frame;
             _spawnedPlayer.transform.position = startPos;
-            for (int i = 1; i < frame; i++)
+            float moveFrame = playerSpeedPerSec / frame;
+            //_spawnedPlayer.transform.position = startPos;
+            for (int i = 0; i < frame; i++)
             {
                 yield return new WaitForSeconds(moveFrame);
                 Vector3 whereTo = endPos - startPos;
                 whereTo = whereTo / frame;
-                //축이 엇나감
-                _spawnedPlayer.transform.position = _spawnedPlayer.transform.position + whereTo;
+                _spawnedPlayer.transform.position = startPos+(whereTo*i);
             }
-
-            
-        }
+            _spawnedPlayer.transform.position = endPos;
+            //_spawnedPlayer.transform.position = endPos;
+        }*/
     }
+}
+enum PlayerStates
+{
+    walking,standing,attacking
 }

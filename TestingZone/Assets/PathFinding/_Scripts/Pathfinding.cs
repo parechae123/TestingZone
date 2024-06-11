@@ -22,6 +22,7 @@ namespace Tarodev_Pathfinding._Scripts {
             var toSearch = new List<NodeBase>() { startNode };
             var processed = new List<NodeBase>();
             GridManager.Instance._outPutNodes.Clear();
+
             while (toSearch.Any()) {
                 var current = toSearch[0];
                 foreach (var t in toSearch) 
@@ -47,11 +48,15 @@ namespace Tarodev_Pathfinding._Scripts {
                     foreach (var tile in path) 
                     {
                         tile.SetColor(PathColor);
-                        GridManager.Instance._outPutNodes.Push(tile);
+                        GridManager.Instance._outPutNodes.Add(tile);
                     }
                     
                     startNode.SetColor(PathColor);
                     Debug.Log(path.Count);
+                    GridManager.Instance._outPutNodes.Add(startNode);
+                    GridManager.Instance._outPutNodes.Reverse();
+                    //GridManager.Instance._outPutNodes.RemoveAt(GridManager.Instance._outPutNodes.Count-1);
+                    GridManager.Instance.ResetMoveTimers();
                     return path;
                 }
 
