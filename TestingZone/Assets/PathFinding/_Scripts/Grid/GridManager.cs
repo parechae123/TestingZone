@@ -27,24 +27,33 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
             {
                 if (_playerNodeBase != value)
                 {
-                    _spawnedPlayer.transform.DOComplete();
-                    _spawnedPlayer.transform.DOKill();
-/*                    Vector3 tempVec = value.transform.position-_playerNodeBase.transform.position;
-                    tempVec = tempVec / 2f;*/
+                    /*_spawnedPlayer.transform.DOComplete();
+                    _spawnedPlayer.transform.DOKill();*/
+                    Vector3 tempVec = value.transform.position - _playerNodeBase.transform.position;
+                    tempVec = tempVec / 2f;
 
-                    _spawnedPlayer.transform.DOMove(value.transform.position, 1f / playerStat.moveSpeed ).SetEase(Ease.Linear);
+                    _spawnedPlayer.transform.DOMove(tempVec+ _playerNodeBase.transform.position, (1f / playerStat.moveSpeed)/2f).SetEase(Ease.Linear).OnComplete(() =>
+                    {
+                        _playerNodeBase = value;
+                        _playerNodeBase.SetColor(Color.white);
+                        _spawnedPlayer.transform.DOMove(value.transform.position, (1f / playerStat.moveSpeed) / 2f).SetEase(Ease.Linear);
+                    });
 //                    _spawnedPlayer.transform.DOMove(_playerNodeBase.transform.position + tempVec, (1f / playerStat.moveSpeed) /2f);
 //                    _spawnedPlayer.transform.DOMove(value.transform.position , (1f / playerStat.moveSpeed) / 2f);
                     if (_outPutNodes.Count > 0 )
                     {
                         if (_outPutNodes[_outPutNodes.Count - 1] == value) 
                         { 
-                             _outPutNodes.Clear(); _states = PlayerStates.standing;
+                             _outPutNodes.Clear();
+                            ResetMoveTimers();
+                            _states = PlayerStates.standing;
                         }
 
                     }
+
                 }
-                _playerNodeBase = value;
+
+
             }
         }
         private Unit _spawnedPlayer, _spawnedGoal;
