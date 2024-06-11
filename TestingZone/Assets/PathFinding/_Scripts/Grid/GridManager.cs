@@ -29,8 +29,8 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
                 {
                     _spawnedPlayer.transform.DOComplete();
                     _spawnedPlayer.transform.DOKill();
-                    Vector3 tempVec = value.transform.position-_playerNodeBase.transform.position;
-                    tempVec = tempVec / 2f;
+/*                    Vector3 tempVec = value.transform.position-_playerNodeBase.transform.position;
+                    tempVec = tempVec / 2f;*/
 
                     _spawnedPlayer.transform.DOMove(value.transform.position, 1f / playerStat.moveSpeed ).SetEase(Ease.Linear);
 //                    _spawnedPlayer.transform.DOMove(_playerNodeBase.transform.position + tempVec, (1f / playerStat.moveSpeed) /2f);
