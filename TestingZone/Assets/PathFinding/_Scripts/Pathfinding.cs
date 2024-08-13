@@ -19,13 +19,13 @@ namespace Tarodev_Pathfinding._Scripts {
         public static readonly Color ClosedColor = new Color(0.35f, 0.4f, 0.5f);
         
         public static List<NodeBase> FindPath(NodeBase startNode, NodeBase targetNode) {
-            var toSearch = new List<NodeBase>() { startNode };
-            var processed = new List<NodeBase>();
+            List<NodeBase> toSearch = new List<NodeBase>() { startNode };
+            List<NodeBase> processed = new List<NodeBase>();
             GridManager.Instance._outPutNodes.Clear();
 
             while (toSearch.Any()) {
-                var current = toSearch[0];
-                foreach (var t in toSearch) 
+                NodeBase current = toSearch[0];
+                foreach (NodeBase t in toSearch) 
                     if (t.F < current.F || t.F == current.F && t.H < current.H) current = t;
 
                 processed.Add(current);
@@ -34,9 +34,9 @@ namespace Tarodev_Pathfinding._Scripts {
                 current.SetColor(ClosedColor);
 
                 if (current == targetNode) {
-                    var currentPathTile = targetNode;
-                    var path = new List<NodeBase>();
-                    var count = 100;
+                    NodeBase currentPathTile = targetNode;
+                    List<NodeBase> path = new List<NodeBase>();
+                    int count = 100;
                     while (currentPathTile != startNode) {
                         path.Add(currentPathTile);
                         currentPathTile = currentPathTile.Connection;
@@ -45,7 +45,7 @@ namespace Tarodev_Pathfinding._Scripts {
                         Debug.Log("sdfsdf");
                     }
 
-                    foreach (var tile in path) 
+                    foreach (NodeBase tile in path) 
                     {
                         tile.SetColor(PathColor);
                         GridManager.Instance._outPutNodes.Add(tile);
@@ -60,10 +60,10 @@ namespace Tarodev_Pathfinding._Scripts {
                     return path;
                 }
 
-                foreach (var neighbor in current.Neighbors.Where(t => t.Walkable && !processed.Contains(t))) {
-                    var inSearch = toSearch.Contains(neighbor);
+                foreach (NodeBase neighbor in current.Neighbors.Where(t => t.Walkable && !processed.Contains(t))) {
+                    bool inSearch = toSearch.Contains(neighbor);
 
-                    var costToNeighbor = current.G + current.GetDistance(neighbor);
+                    float costToNeighbor = current.G + current.GetDistance(neighbor);
 
                     if (!inSearch || costToNeighbor < neighbor.G) {
                         neighbor.SetG(costToNeighbor);

@@ -73,14 +73,22 @@ namespace _Scripts.Tiles {
         public void SetConnection(NodeBase nodeBase) {
             Connection = nodeBase;
         }
-
+        public bool tempT = false;
         public void SetG(float g) {
             G = g;
+            if (tempT)
+            {
+                Debug.Log(g+"G");
+            }
             SetText();
         }
 
         public void SetH(float h) {
             H = h;
+            if (tempT)
+            {
+                Debug.Log(H+"H");
+            }
             SetText();
         }
 
