@@ -7,19 +7,28 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 using DG.Tweening.Core.Easing;
+using Newtonsoft.Json.Linq;
 
 
 public class Express : MonoBehaviour
 {
     public string url;
     [SerializeField]public DataInfo dataInfo;
-    public Button btn;
+    public Button btnRegist;
+    public Button btnSearch;
     // Start is called before the first frame update
     void Start()
     {
-        btn.onClick.AddListener(() =>
+        btnRegist.onClick.AddListener(() =>
         {
             StartCoroutine(SendRequest(dataInfo, (isSuccess) =>
+            {
+
+            }));
+        });
+        btnSearch.onClick.AddListener(() =>
+        {
+            StartCoroutine(SendSearch(dataInfo.SongName, (isSuccess) =>
             {
 
             }));
@@ -45,6 +54,33 @@ public class Express : MonoBehaviour
             {
                 Debug.Log(webRequest.downloadHandler.text);
                 
+            }
+        }
+    }
+    IEnumerator SendSearch(string songName, Action<string> callback)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("SongName", songName);
+
+        
+
+        using (UnityWebRequest webRequest = UnityWebRequest.Post(url+ "/searchSongData", form))
+        {
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Failed to save data to the server: " + webRequest.error);
+                Debug.Log(webRequest.downloadHandler.text);
+            }
+            else
+            {
+                string tempString = webRequest.downloadHandler.text;
+                tempString = tempString.Replace("\\", string.Empty);
+                Debug.Log(tempString);
+                DataInfo dataInfoTemp = new DataInfo();
+                dataInfoTemp = JsonConvert.DeserializeObject<DataInfo>(tempString);
+                Debug.Log(dataInfoTemp.SongName);
             }
         }
     }
